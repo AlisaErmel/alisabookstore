@@ -10,11 +10,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import fi.haagahelia.alisabookstore.model.Book;
 import fi.haagahelia.alisabookstore.model.BookRepository;
+import fi.haagahelia.alisabookstore.model.CategoryRepository;
 
 @Controller
 public class BookController {
     @Autowired
     private BookRepository repository;
+
+    @Autowired
+    private CategoryRepository crepository;
 
     @GetMapping("/booklist")
     public String bookList(Model model) {
@@ -25,6 +29,7 @@ public class BookController {
     @GetMapping("/addbook")
     public String addBookForm(Model model) {
         model.addAttribute("book", new Book());
+        model.addAttribute("categories", crepository.findAll());
         return "addbook";
     }
 
@@ -44,6 +49,7 @@ public class BookController {
     public String editBook(@PathVariable("id") Long id, Model model) {
         Book book = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid book Id:" + id));
         model.addAttribute("book", book);
+        model.addAttribute("categories", crepository.findAll());
         return "editbook";
     }
 }
