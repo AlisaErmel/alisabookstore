@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 import fi.haagahelia.alisabookstore.model.Book;
 import fi.haagahelia.alisabookstore.model.BookRepository;
@@ -21,7 +23,8 @@ public class BookController {
     private CategoryRepository crepository;
 
     @GetMapping("/booklist")
-    public String bookList(Model model) {
+    public String bookList(Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
         model.addAttribute("books", repository.findAll());
         return "booklist";
     }
@@ -39,8 +42,9 @@ public class BookController {
         return "redirect:/booklist";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deletebook/{id}")
-    public String deleteBook(@PathVariable("id") Long id, Model model) {
+    public String deleteBook(@PathVariable("id") Long id) {
         repository.deleteById(id);
         return "redirect:/booklist";
     }
@@ -51,5 +55,10 @@ public class BookController {
         model.addAttribute("book", book);
         model.addAttribute("categories", crepository.findAll());
         return "editbook";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login"; // returns login.html
     }
 }
