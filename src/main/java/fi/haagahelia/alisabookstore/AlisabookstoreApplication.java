@@ -40,7 +40,7 @@ public class AlisabookstoreApplication {
 			repository.save(new Book("Life in Finland", "Ankka Kerilainen", 2018, "38895503", 90, category2));
 			repository.save(new Book("City of Helsinki", "Musta Lakkonen", 2013, "49902022", 76, category3));
 
-			// Create users: admin/password user/password2
+			// Create users: admin/password2 user/password
 			AppUser user1 = new AppUser("user", "$2a$12$sC0PNpiaqWZAVc5Y2BgWqe.24ZhxLGC1pc3WpKsAfYD0lUDK3DPwK",
 					"USER");
 			AppUser user2 = new AppUser("admin", "$2a$12$UvNDCyZrgmGm7/EEKiwMNOgKiEb4z0r3QA2KG.RfbOKvBnUnyIlZK",
