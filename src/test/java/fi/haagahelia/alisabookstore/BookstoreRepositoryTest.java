@@ -15,6 +15,7 @@ import fi.haagahelia.alisabookstore.model.BookRepository;
 import fi.haagahelia.alisabookstore.model.Category;
 import fi.haagahelia.alisabookstore.model.CategoryRepository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @SpringBootTest(classes = AlisabookstoreApplication.class)
@@ -30,8 +31,20 @@ public class BookstoreRepositoryTest {
     @Autowired
     private AppUserRepository userrepository;
 
+    @BeforeEach
+    public void clearDatabase() {
+        bookrepository.deleteAll();
+        categoryrepository.deleteAll();
+    }
+
     @Test
     public void findByAuthorShouldReturnBook() {
+        Category category = new Category("Fiction");
+        categoryrepository.save(category);
+
+        Book book = new Book("Beautiful evening", "Tom Tomson", 2020, "1234567890", 50, category);
+        bookrepository.save(book);
+
         List<Book> books = bookrepository.findByAuthor("Tom Tomson");
 
         assertThat(books).hasSize(1);

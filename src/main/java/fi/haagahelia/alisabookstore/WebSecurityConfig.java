@@ -30,7 +30,7 @@ public class WebSecurityConfig {
                 http.authorizeHttpRequests(
                                 authorize -> authorize
                                                 .requestMatchers("/css/**").permitAll()
-                                                .requestMatchers("/api/books/**").permitAll()
+                                                .requestMatchers("/api/**").permitAll()
                                                 .requestMatchers(toH2Console()).permitAll() // for h2console
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions
@@ -39,9 +39,11 @@ public class WebSecurityConfig {
                                                 .defaultSuccessUrl("/booklist", true)
                                                 .permitAll())
                                 .logout(logout -> logout.permitAll())
-                                .csrf(csrf -> csrf.ignoringRequestMatchers(toH2Console())); // for h2console, not for
-                                                                                            // production, just for
-                                                                                            // development
+                                // Disable CSRF for /api/** and H2 console
+                                .csrf(csrf -> csrf
+                                                .ignoringRequestMatchers(toH2Console()) // PathRequest matcher
+                                                .ignoringRequestMatchers("/api/**") // String pattern
+                                );
 
                 return http.build();
         }

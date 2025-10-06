@@ -11,6 +11,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 
 import fi.haagahelia.alisabookstore.model.Book;
+import fi.haagahelia.alisabookstore.model.BookRepository;
+import fi.haagahelia.alisabookstore.model.Category;
+import fi.haagahelia.alisabookstore.model.CategoryRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc(addFilters = false)
@@ -21,6 +24,12 @@ public class BookRestTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private CategoryRepository categoryrepository;
+
+    @Autowired
+    private BookRepository bookrepository;
 
     private String baseUrl() {
         return "http://localhost:" + port + "/api/books"; // must match your controller @RequestMapping
@@ -58,4 +67,65 @@ public class BookRestTest {
         assertThat(response.getBody().getId()).isEqualTo(firstId);
         assertThat(response.getBody().getTitle()).isEqualTo(books[0].getTitle());
     }
+
+    // ---- POST /api/books ----
+    @Test
+    public void createBookShouldReturnCreatedBook() {
+        Category category = new Category("TestCategory");
+        categoryrepository.save(category);
+
+        Book newBook = new Book("Test Book", "Test Author", 2025, "1234567890", 50, category);
+
+        ResponseEntity<Book> response = restTemplate.postForEntity(baseUrl(), newBook, Book.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTitle()).isEqualTo("Test Book");
+    }
+
+    // ---- PUT /api/books/{id} ----
+    @Test
+    public void updateBookShouldReturnUpdatedBook() {
+        // First create a book
+        Category category = new Category("UpdateCategory");
+        categoryrepository.save(category);
+
+        Book book = new Book("Old Title", "Author", 2020, "111111", 20, category);
+        bookrepository.save(book);
+
+        book.setTitle("Updated Title");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Book> entity = new HttpEntity<>(book, headers);
+
+        ResponseEntity<Book> response = restTemplate.exchange(
+                baseUrl() + "/" + book.getId(),
+                HttpMethod.PUT,
+                entity,
+                Book.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTitle()).isEqualTo("Updated Title");
+    }
+
+    // ---- DELETE /api/books/{id} ----
+    @Test
+    public void deleteBookShouldRemoveBook() {
+        // First create a book
+        Category category = new Category("DeleteCategory");
+        categoryrepository.save(category);
+
+        Book book = new Book("Book to Delete", "Author", 2025, "222222", 30, category);
+        bookrepository.save(book);
+
+        // Delete
+        restTemplate.delete(baseUrl() + "/" + book.getId());
+
+        // Verify deletion
+        ResponseEntity<Book> response = restTemplate.getForEntity(baseUrl() + "/" + book.getId(), Book.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
 }
