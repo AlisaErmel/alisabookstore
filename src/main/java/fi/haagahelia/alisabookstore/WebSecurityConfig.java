@@ -30,7 +30,7 @@ public class WebSecurityConfig {
                 http.authorizeHttpRequests(
                                 authorize -> authorize
                                                 .requestMatchers("/css/**").permitAll()
-                                                .requestMatchers("/api/books**").permitAll()
+                                                .requestMatchers("/api/books/**").permitAll()
                                                 .requestMatchers(toH2Console()).permitAll() // for h2console
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions
