@@ -15,7 +15,7 @@ import fi.haagahelia.alisabookstore.model.BookRepository;
 import fi.haagahelia.alisabookstore.model.Category;
 import fi.haagahelia.alisabookstore.model.CategoryRepository;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "server.port=0")
 @AutoConfigureMockMvc(addFilters = false)
 public class BookRestTest {
 
