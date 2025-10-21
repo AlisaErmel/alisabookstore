@@ -1,6 +1,6 @@
 package fi.haagahelia.alisabookstore;
 
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+//import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,7 @@ public class WebSecurityConfig {
                                 authorize -> authorize
                                                 .requestMatchers("/css/**").permitAll()
                                                 .requestMatchers("/api/**").permitAll()
-                                                .requestMatchers(toH2Console()).permitAll() // for h2console
+                                                // .requestMatchers(toH2Console()).permitAll() // for h2console
                                                 .anyRequest().authenticated())
                                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions
                                                 .disable())) // for h2console
@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                                 .logout(logout -> logout.permitAll())
                                 // Disable CSRF for /api/** and H2 console
                                 .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers(toH2Console()) // PathRequest matcher
+                                                // .ignoringRequestMatchers(toH2Console()) // PathRequest matcher
                                                 .ignoringRequestMatchers("/api/**") // String pattern
                                 );
 
