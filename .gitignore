@@ -34,3 +34,7 @@ build/
 
 #Keystore
 keystore.p12
+
+# Maven binaries
+apache-maven-*/
+apache-maven-*.tar.gz
